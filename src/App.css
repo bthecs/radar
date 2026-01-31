@@ -1,0 +1,150 @@
+/* 1. ESTILOS GENERALES */
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    background-color: #1a1a1a; 
+    color: white; 
+    overflow: hidden; 
+    height: 100%;
+  }
+  
+  /* 2. EL CONTENEDOR DEL MAPA */
+  .map-container { 
+    height: 100vh;
+    width: 100vw;
+    z-index: 1; 
+    position: relative;
+  }
+
+  /* Capa radar: más contraste y saturación para que lluvia se vea clara (no como llovizna) */
+  .map-container .radar-layer,
+  .map-container .leaflet-tile-pane .leaflet-layer:nth-child(3) {
+    filter: contrast(1.35) saturate(1.5);
+  }
+  .map-container .radar-layer img,
+  .map-container .leaflet-tile-pane .leaflet-layer:nth-child(3) img {
+    filter: contrast(1.35) saturate(1.5);
+  }
+  
+  /* Panel de alertas (como en la página) */
+  .alerts-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    max-width: 360px;
+    max-height: 50vh;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 200, 100, 0.4);
+    z-index: 1000;
+    box-shadow: 0 0 24px rgba(0,0,0,0.6);
+  }
+  .demo-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 14px;
+    background: rgba(255, 180, 0, 0.95);
+    color: #1a1a1a;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 8px;
+    z-index: 1001;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .alerts-panel-title {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #ffc864;
+  }
+  .alerts-panel-empty {
+    margin: 0;
+    font-size: 12px;
+    color: #999;
+  }
+  .alerts-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .alert-item {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    font-size: 12px;
+    color: #ddd;
+  }
+  .alert-item:last-child { border-bottom: none; margin-bottom: 0; }
+  .alert-item strong { color: #ffaa44; }
+  .alert-item p { margin: 6px 0 4px 0; line-height: 1.35; }
+  .alert-time { font-size: 11px; color: #888; }
+
+  /* 3. LEYENDA LATERAL (La barra de colores) */
+  .legend-container {
+    position: absolute;
+    bottom: 30px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  }
+  
+  .legend-bar {
+    width: 12px;
+    height: 150px;
+    /* Escala clara: llovizna suave → lluvia bien visible → intenso → granizo */
+    background: linear-gradient(to top, 
+        rgba(80, 140, 255, 0.85) 0%,   /* Azul suave = Llovizna */
+        rgba(0, 200, 120, 1) 22%,      /* Verde = Lluvia */
+        rgba(255, 220, 0, 1) 45%,     /* Amarillo = Moderado */
+        rgba(255, 100, 0, 1) 70%,     /* Naranja = Intenso */
+        rgba(255, 0, 0, 1) 85%,       /* Rojo = Muy fuerte */
+        rgba(180, 0, 255, 1) 100%     /* Violeta = Granizo */
+    );
+    border-radius: 6px;
+  }
+  
+  .legend-labels {
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #ddd;
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    text-align: right;
+  }
+  /* Animación de Pulso para Granizo */
+@keyframes pulse-red {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 50, 50, 0.7); }
+    70% { transform: scale(1.0); box-shadow: 0 0 0 15px rgba(255, 50, 50, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 50, 50, 0); }
+}
+
+.hail-icon {
+    background-color: #ff0000; /* Rojo Alerta */
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 20px !important;
+    height: 20px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    animation: pulse-red 1.5s infinite; /* Parpadeo infinito */
+    box-shadow: 0 0 10px red;
+}
