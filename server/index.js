@@ -218,11 +218,10 @@ app.get('/api/alerts/raw', async (req, res) => {
     res.json({ alerts: list });
 });
 
-// En deploy (cuando existe dist): servir frontend y SPA
+// En deploy (cuando existe dist): servir frontend y SPA (Express 5 no acepta '*')
 if (hasDist) {
     app.use(express.static(distPath));
-    app.get('*', (req, res, next) => {
-        if (req.path.startsWith('/api')) return next();
+    app.get(/^(?!\/api).*/, (req, res) => {
         res.sendFile(path.join(distPath, 'index.html'));
     });
 }
